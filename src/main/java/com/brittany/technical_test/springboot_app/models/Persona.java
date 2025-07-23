@@ -15,7 +15,7 @@ public abstract class Persona {
     private String genero;
     private Integer edad;
     @Column(unique = true, nullable = false)
-    private Long numCedula;
+    private String numCedula;
     private String direccion;
     @Column(unique = true, nullable = false)
     private String telefono;

@@ -29,12 +29,12 @@ public class Cliente extends Persona {
     @OneToMany(mappedBy = "cliente", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Cuenta> cuentas = new HashSet<>();
 
-    public Cliente(String nombre, String genero, Integer edad, Long numCedula, String direccion, String telefono) {
+    public Cliente(String nombre, String genero, Integer edad, String numCedula, String direccion, String telefono) {
         super(nombre, genero, edad, numCedula, direccion, telefono);
     }
 
     @Builder
-    public Cliente(String nombre, String genero, Integer edad, Long numCedula, String direccion, String telefono,
+    public Cliente(String nombre, String genero, Integer edad, String numCedula, String direccion, String telefono,
             String password, Boolean estado) {
         super(nombre, genero, edad, numCedula, direccion, telefono);
         this.password = password;
