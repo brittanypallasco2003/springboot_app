@@ -19,34 +19,41 @@ import com.brittany.technical_test.springboot_app.DTOs.Response.ErrorResponseDTO
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ErrorResponseDTO> handleValidationErrors(MethodArgumentNotValidException exception){
+    public ResponseEntity<ErrorResponseDTO> handleValidationErrors(MethodArgumentNotValidException exception) {
 
-        Map<String, String>mapErrors= new LinkedHashMap<>();
+        Map<String, String> mapErrors = new LinkedHashMap<>();
 
-        BindingResult result=exception.getBindingResult();
-        List<FieldError>fieldErrors=result.getFieldErrors();
+        BindingResult result = exception.getBindingResult();
+        List<FieldError> fieldErrors = result.getFieldErrors();
 
-        fieldErrors.forEach(error->mapErrors.put(error.getField(), error.getDefaultMessage()));
+        fieldErrors.forEach(error -> mapErrors.put(error.getField(), error.getDefaultMessage()));
 
-        ErrorResponseDTO response=mapErrorResponseDTO(HttpStatus.BAD_REQUEST.value(), HttpStatus.BAD_REQUEST.name(), "Error de validación", mapErrors);
+        ErrorResponseDTO response = mapErrorResponseDTO(HttpStatus.BAD_REQUEST.value(), HttpStatus.BAD_REQUEST.name(),
+                "Error de validación", mapErrors);
 
         return ResponseEntity.badRequest().body(response);
     }
 
-    
-
-    private ErrorResponseDTO mapErrorResponseDTO(int status, String error, String message, Map<String, String> errors) {
-    ErrorResponseDTO.ErrorResponseDTOBuilder builder = ErrorResponseDTO.builder()
-        .timestamp(LocalDateTime.now())
-        .status(status)
-        .error(error)
-        .message(message);
-
-    if (errors != null && !errors.isEmpty()) {
-        builder.errors(errors);
+    @ExceptionHandler(ResourceNotFound.class)
+    public ResponseEntity<?> manejarRecursoNoEncontrado(ResourceNotFound exception) {
+        ErrorResponseDTO response = mapErrorResponseDTO(HttpStatus.NOT_FOUND.value(), HttpStatus.NOT_FOUND.name(),
+                exception.getMessage(), null);
+                
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
     }
 
-    return builder.build();
-}
+    private ErrorResponseDTO mapErrorResponseDTO(int status, String error, String message, Map<String, String> errors) {
+        ErrorResponseDTO.ErrorResponseDTOBuilder builder = ErrorResponseDTO.builder()
+                .timestamp(LocalDateTime.now())
+                .status(status)
+                .error(error)
+                .message(message);
+
+        if (errors != null && !errors.isEmpty()) {
+            builder.errors(errors);
+        }
+
+        return builder.build();
+    }
 
 }
