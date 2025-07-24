@@ -38,8 +38,8 @@ public class ClienteController {
         ClienteResponseDTO response = clienteService.createCliente(dto);
 
         URI location = ServletUriComponentsBuilder
-                .fromCurrentRequest()
-                .path("/{id}")
+                .fromCurrentContextPath()
+                .path("clientes/{id}")
                 .buildAndExpand(response.id())
                 .toUri();
 
