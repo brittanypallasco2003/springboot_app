@@ -70,6 +70,13 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
     }
 
+    @ExceptionHandler(IllegalStateException.class)
+    public ResponseEntity<?> handleIllegalState(IllegalStateException exception){
+        ErrorResponseDTO response=mapErrorResponseDTO(HttpStatus.CONFLICT.value(), HttpStatus.CONFLICT.name(), exception.getMessage(), null);
+
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
+    }
+
     private ErrorResponseDTO mapErrorResponseDTO(int status, String error, String message, Map<String, String> errors) {
         ErrorResponseDTO.ErrorResponseDTOBuilder builder = ErrorResponseDTO.builder()
                 .timestamp(LocalDateTime.now())
