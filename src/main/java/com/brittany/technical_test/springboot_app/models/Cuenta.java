@@ -3,18 +3,9 @@ package com.brittany.technical_test.springboot_app.models;
 import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.PrePersist;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -28,7 +19,10 @@ import lombok.Setter;
 public class Cuenta {
 
     @Id
-    @Column(name = "num_cuenta", length = 10, unique = true)
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id;
+
+    @Column(name = "num_cuenta", length = 10, unique = true, nullable = false)
     private String numCuenta;
 
     @Enumerated(value = EnumType.STRING)
@@ -49,7 +43,7 @@ public class Cuenta {
 
     @Builder
     public Cuenta(TipoCuentaEnum tipoCuenta, BigDecimal saldoInicial, Boolean estado, Cliente cliente,
-            Set<Movimiento> movimientos) {
+                  Set<Movimiento> movimientos) {
         this.tipoCuenta = tipoCuenta;
         this.saldoInicial = saldoInicial;
         this.estado = estado;
@@ -88,6 +82,4 @@ public class Cuenta {
             return false;
         return true;
     }
-    
-
 }
