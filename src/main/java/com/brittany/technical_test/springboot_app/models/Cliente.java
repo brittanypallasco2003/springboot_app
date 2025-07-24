@@ -22,7 +22,7 @@ import lombok.Setter;
 public class Cliente extends Persona {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long clientId;
+    private Long id;
     private String password;
     private Boolean estado;
 
