@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.brittany.technical_test.springboot_app.DTOs.Request.CuentaCreateDTO;
+
 import com.brittany.technical_test.springboot_app.DTOs.Response.ClienteResponseDTO;
 import com.brittany.technical_test.springboot_app.DTOs.Response.CuentaResponseDTO;
 import com.brittany.technical_test.springboot_app.exceptions.ResourceNotFound;
@@ -19,77 +20,106 @@ import com.brittany.technical_test.springboot_app.repositories.CuentaRepository;
 @Service
 public class CuentaServiceImpl implements CuentaService {
 
-    private final CuentaRepository cuentaRepository;
-    private final ClienteRepository clienteRepository;
+        private final CuentaRepository cuentaRepository;
+        private final ClienteRepository clienteRepository;
 
-    public CuentaServiceImpl(CuentaRepository cuentaRepository, ClienteRepository clienteRepository) {
-        this.cuentaRepository = cuentaRepository;
-        this.clienteRepository = clienteRepository;
-    }
+        public CuentaServiceImpl(CuentaRepository cuentaRepository, ClienteRepository clienteRepository) {
+                this.cuentaRepository = cuentaRepository;
+                this.clienteRepository = clienteRepository;
+        }
 
-    @Transactional
-    @Override
-    public CuentaResponseDTO crearCuenta(Long clientId, CuentaCreateDTO dto) {
-        Cliente clienteDb = clienteRepository.findById(clientId)
-                .orElseThrow(() -> new ResourceNotFound("Cliente no encontrado"));
+        @Transactional
+        @Override
+        public CuentaResponseDTO crearCuenta(Long clientId, CuentaCreateDTO dto) {
+                Cliente clienteDb = clienteRepository.findById(clientId)
+                                .orElseThrow(() -> new ResourceNotFound("Cliente no encontrado"));
 
-        if (cuentaRepository.existsByClienteIdAndTipoCuenta(clientId, dto.tipoCuenta()))
-            throw new IllegalStateException(
-                    String.format("El cliente ya tiene una cuenta de tipo: %s", dto.tipoCuenta().name()));
+                if (cuentaRepository.existsByClienteIdAndTipoCuenta(clientId, dto.tipoCuenta()))
+                        throw new IllegalStateException(String.format("El cliente ya tiene una cuenta de tipo: %s",
+                                        dto.tipoCuenta().name()));
 
-        Cuenta cuenta = Cuenta.builder()
-                .tipoCuenta(dto.tipoCuenta())
-                .saldoInicial(dto.saldoInicial())
-                .estado(true)
-                .build();
+                Cuenta cuenta = Cuenta.builder()
+                                .tipoCuenta(dto.tipoCuenta())
+                                .saldoInicial(dto.saldoInicial())
+                                .estado(true)
+                                .build();
 
-        clienteDb.addCuenta(cuenta);
+                clienteDb.addCuenta(cuenta);
 
-        Cliente clienteUpdated = clienteRepository.save(clienteDb);
+                ClienteResponseDTO clienteResponseDTO = mapParcialClienteResponseDTO(clienteDb);
+                Cuenta savedCuenta = cuentaRepository.save(cuenta);
 
-        Cuenta savedCuenta = clienteUpdated.getCuentas()
-                .stream()
-                .filter(cta -> cta.getTipoCuenta() == dto.tipoCuenta())
-                .findFirst()
-                .orElseThrow(() -> new IllegalStateException("No se pudo recuperar la cuenta creada"));
-        ClienteResponseDTO clienteResponseDTO = mapParcialClienteResponseDTO(clienteUpdated);
+                return mapCuentaResponseDTO(savedCuenta, clienteResponseDTO);
+        }
 
-        return mapCuentaResponseDTO(savedCuenta, clienteResponseDTO);
-    }
+        @Transactional(readOnly = true)
+        @Override
+        public List<CuentaResponseDTO> listAllCuentas() {
+                List<Cuenta> cuentas = cuentaRepository.findAll();
+                return cuentas.stream()
+                                .map(cta -> new CuentaResponseDTO(
+                                                cta.getId(), cta.getNumCuenta(), cta.getTipoCuenta(),
+                                                cta.getSaldoInicial(), cta.getEstado(),
+                                                mapParcialClienteResponseDTO(cta.getCliente())))
+                                .collect(Collectors.toList());
 
-    @Transactional(readOnly = true)
-    @Override
-    public List<CuentaResponseDTO> listAllCuentas() {
-        List<Cuenta> cuentas = cuentaRepository.findAll();
-        return cuentas.stream()
-                .map(cta -> new CuentaResponseDTO(
-                        cta.getId(), cta.getNumCuenta(), cta.getTipoCuenta(), cta.getSaldoInicial(), cta.getEstado(),
-                        mapParcialClienteResponseDTO(cta.getCliente())))
-                .collect(Collectors.toList());
+        }
 
-    }
+        @Transactional(readOnly = true)
+        @Override
+        public CuentaResponseDTO getSpecificCuenta(UUID id) {
+                Cuenta cuentaStored = cuentaRepository.findById(id)
+                                .orElseThrow(() -> new ResourceNotFound("Cuenta no encontrada"));
 
-    @Transactional(readOnly = true)
-    @Override
-    public CuentaResponseDTO getSpecificCuenta(UUID id) {
-        Cuenta cuentaStored = cuentaRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFound("Cuenta no encontrada"));
+                ClienteResponseDTO clienteResponseDTO = mapParcialClienteResponseDTO(cuentaStored.getCliente());
 
-        ClienteResponseDTO clienteResponseDTO = mapParcialClienteResponseDTO(cuentaStored.getCliente());
+                return mapCuentaResponseDTO(cuentaStored, clienteResponseDTO);
+        }
 
-        return mapCuentaResponseDTO(cuentaStored, clienteResponseDTO);
-    }
+        @Transactional
+        @Override
+        public CuentaResponseDTO updateCuentaState(UUID id) {
+                Cuenta cuentaStored = cuentaRepository.findById(id)
+                                .orElseThrow(() -> new ResourceNotFound("Cuenta no encontrada"));
 
-    private CuentaResponseDTO mapCuentaResponseDTO(Cuenta cuenta, ClienteResponseDTO clienteResponseDTO) {
-        return new CuentaResponseDTO(cuenta.getId(), cuenta.getNumCuenta(), cuenta.getTipoCuenta(),
-                cuenta.getSaldoInicial(),
-                cuenta.getEstado(), clienteResponseDTO);
+                cuentaStored.setEstado(!cuentaStored.getEstado());
 
-    }
+                // Consistencia en memoria
+                Cliente cliente = cuentaStored.getCliente();
+                cliente.addCuenta(cuentaStored);
 
-    private ClienteResponseDTO mapParcialClienteResponseDTO(Cliente cliente) {
-        return new ClienteResponseDTO(null, cliente.getId(), cliente.getNumCedula(), cliente.getNombre(), null, null,
-                null, null);
-    }
+                Cuenta cuentaUpdated = cuentaRepository.save(cuentaStored);
+
+                ClienteResponseDTO clienteResponseDTO = mapParcialClienteResponseDTO(cliente);
+
+                return mapCuentaResponseDTO(cuentaUpdated, clienteResponseDTO);
+        }
+
+        @Transactional
+        @Override
+        public void deleteCuenta(UUID id) {
+                Cuenta cuentaDb=cuentaRepository.findById(id).orElseThrow(()->new ResourceNotFound("Cuenta no encontrada"));
+                cuentaRepository.delete(cuentaDb);
+        }
+
+        private CuentaResponseDTO mapCuentaResponseDTO(Cuenta cuenta, ClienteResponseDTO clienteResponseDTO) {
+                return new CuentaResponseDTO(cuenta.getId(),
+                                cuenta.getNumCuenta(),
+                                cuenta.getTipoCuenta(),
+                                cuenta.getSaldoInicial(),
+                                cuenta.getEstado(), clienteResponseDTO);
+
+        }
+
+        private ClienteResponseDTO mapParcialClienteResponseDTO(Cliente cliente) {
+                return new ClienteResponseDTO(null,
+                                cliente.getId(),
+                                cliente.getNumCedula(),
+                                cliente.getNombre(),
+                                null,
+                                null,
+                                null,
+                                null);
+        }
 
 }
