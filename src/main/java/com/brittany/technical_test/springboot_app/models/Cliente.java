@@ -43,6 +43,12 @@ public class Cliente extends Persona {
         this.estado = estado;
     }
 
+    public Cliente addCuenta(Cuenta cuentaCreada){
+        cuentas.add(cuentaCreada);
+        cuentaCreada.setCliente(this);
+        return this;
+    }
+
      @Override
     public boolean equals(Object o) {
         if (this == o) return true;
