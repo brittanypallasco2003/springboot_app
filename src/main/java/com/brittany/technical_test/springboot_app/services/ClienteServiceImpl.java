@@ -60,7 +60,7 @@ public class ClienteServiceImpl implements ClienteService {
     public List<ClienteResponseDTO> listAllClients() {
         List<Cliente> clientes = clienteRepository.findAll();
         return clientes.stream()
-                .map(cliente -> new ClienteResponseDTO(null, cliente.getClientId(), cliente.getNumCedula(),
+                .map(cliente -> new ClienteResponseDTO(null, cliente.getId(), cliente.getNumCedula(),
                         cliente.getNombre(), cliente.getDireccion(), cliente.getTelefono(), cliente.getGenero(), cliente.getEstado()))
                 .collect(Collectors.toList());
     }
@@ -76,7 +76,7 @@ public class ClienteServiceImpl implements ClienteService {
 
     private ClienteResponseDTO mapClienteResposeDTO(Cliente cliente, String message) {
         return new ClienteResponseDTO(message,
-                cliente.getClientId(),
+                cliente.getId(),
                 cliente.getNumCedula(),
                 cliente.getNombre(),
                 cliente.getDireccion(),
