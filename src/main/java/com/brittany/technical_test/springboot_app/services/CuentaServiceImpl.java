@@ -1,5 +1,7 @@
 package com.brittany.technical_test.springboot_app.services;
 
+import java.util.UUID;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -53,6 +55,16 @@ public class CuentaServiceImpl implements CuentaService {
         return mapCuentaResponseDTO(savedCuenta, clienteResponseDTO);
     }
 
+    
+    @Override
+    public CuentaResponseDTO getSpecificCuenta(UUID id) {
+        Cuenta cuentaStored=cuentaRepository.findById(id).orElseThrow(()->new ResourceNotFound("Cuenta no encontrada"));
+
+        ClienteResponseDTO clienteResponseDTO=mapParcialClienteResponseDTO(cuentaStored.getCliente());
+
+        return mapCuentaResponseDTO(cuentaStored, clienteResponseDTO);
+    }
+
     private CuentaResponseDTO mapCuentaResponseDTO(Cuenta cuenta, ClienteResponseDTO clienteResponseDTO) {
         return new CuentaResponseDTO(cuenta.getId(), cuenta.getNumCuenta(), cuenta.getTipoCuenta(),
                 cuenta.getSaldoInicial(),
@@ -64,5 +76,6 @@ public class CuentaServiceImpl implements CuentaService {
         return new ClienteResponseDTO(null, cliente.getId(), cliente.getNumCedula(), cliente.getNombre(), null, null,
                 null, null);
     }
+
 
 }
