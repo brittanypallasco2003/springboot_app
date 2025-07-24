@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import com.brittany.technical_test.springboot_app.DTOs.Response.ErrorResponseDTO;
+import com.brittany.technical_test.springboot_app.exceptions.utils.ExceptionUtils;
+import com.brittany.technical_test.springboot_app.models.TipoCuentaEnum;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -53,8 +55,17 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ResponseEntity<?> handleHttpMessageNotReadable(HttpMessageNotReadableException exception) {
+
+        String message;
+
+        if (exception.getMessage().contains("from String")) {
+            message = ExceptionUtils.buildEnumErrorMessage(exception.getMessage(), TipoCuentaEnum.class);
+        } else {
+            message = "Error al leer el cuerpo de la solicitud. Verifique el formato del JSON.";
+        }
+
         ErrorResponseDTO response = mapErrorResponseDTO(HttpStatus.BAD_REQUEST.value(), HttpStatus.BAD_REQUEST.name(),
-                exception.getMessage(), null);
+                message, null);
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
     }
