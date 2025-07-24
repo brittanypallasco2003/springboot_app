@@ -7,6 +7,7 @@ import java.util.Map;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -35,11 +36,27 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(ResourceNotFound.class)
-    public ResponseEntity<?> manejarRecursoNoEncontrado(ResourceNotFound exception) {
+    public ResponseEntity<?> handleResourceNotFound(ResourceNotFound exception) {
         ErrorResponseDTO response = mapErrorResponseDTO(HttpStatus.NOT_FOUND.value(), HttpStatus.NOT_FOUND.name(),
                 exception.getMessage(), null);
-                
+
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+    }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<?> handleIllegalArgument(IllegalArgumentException exception) {
+        ErrorResponseDTO response = mapErrorResponseDTO(HttpStatus.BAD_REQUEST.value(), HttpStatus.BAD_REQUEST.name(),
+                exception.getMessage(), null);
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+    }
+
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<?> handleHttpMessageNotReadable(HttpMessageNotReadableException exception) {
+        ErrorResponseDTO response = mapErrorResponseDTO(HttpStatus.BAD_REQUEST.value(), HttpStatus.BAD_REQUEST.name(),
+                exception.getMessage(), null);
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
     }
 
     private ErrorResponseDTO mapErrorResponseDTO(int status, String error, String message, Map<String, String> errors) {
