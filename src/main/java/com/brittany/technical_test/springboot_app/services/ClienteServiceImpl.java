@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.brittany.technical_test.springboot_app.DTOs.Request.ClienteCreateDTO;
+import com.brittany.technical_test.springboot_app.DTOs.Request.ClienteUpdateDTO;
 import com.brittany.technical_test.springboot_app.DTOs.Response.ClienteResponseDTO;
 import com.brittany.technical_test.springboot_app.exceptions.ResourceNotFound;
 import com.brittany.technical_test.springboot_app.models.Cliente;
@@ -61,7 +62,8 @@ public class ClienteServiceImpl implements ClienteService {
         List<Cliente> clientes = clienteRepository.findAll();
         return clientes.stream()
                 .map(cliente -> new ClienteResponseDTO(null, cliente.getId(), cliente.getNumCedula(),
-                        cliente.getNombre(), cliente.getDireccion(), cliente.getTelefono(), cliente.getGenero(), cliente.getEstado()))
+                        cliente.getNombre(), cliente.getDireccion(), cliente.getTelefono(), cliente.getGenero(),
+                        cliente.getEstado()))
                 .collect(Collectors.toList());
     }
 
@@ -72,6 +74,42 @@ public class ClienteServiceImpl implements ClienteService {
                 .orElseThrow(() -> new ResourceNotFound("Cliente no encontrado"));
 
         return mapClienteResposeDTO(cliente, null);
+    }
+
+    @Transactional
+    @Override
+    public ClienteResponseDTO updateClient(ClienteUpdateDTO dto, Long id) {
+        Cliente clienteStored = clienteRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFound("Cliente no encontrado"));
+
+        if (dto.nombres() == null || dto.password() == null || dto.direccion() == null || dto.telefono() == null
+                || dto.genero() == null)
+            throw new IllegalArgumentException(
+                    "Todos los campos son obligatorios para una actualización completa (PUT)");
+
+        Cliente clientUpdated = clienteRepository.save(validateClientData(dto, clienteStored));
+
+        return mapClienteResposeDTO(clientUpdated,
+                String.format("Datos del cliente: %s actualizados exitosamente", clienteStored.getNombre()));
+    }
+
+
+    
+    private Cliente validateClientData(ClienteUpdateDTO dto, Cliente clienteStored){
+         if (dto.nombres() != null) clienteStored.setNombre(dto.nombres());
+
+        if (dto.password() != null) clienteStored.setPassword(BCrypt.hashpw(dto.password(), BCrypt.gensalt()));
+
+        if (dto.direccion() != null) clienteStored.setDireccion(dto.direccion());
+        
+
+        if (dto.telefono() != null) clienteStored.setTelefono(dto.telefono());
+        
+
+        if (dto.genero() != null) clienteStored.setGenero(dto.genero());
+
+        return clienteStored;
+
     }
 
     private ClienteResponseDTO mapClienteResposeDTO(Cliente cliente, String message) {
