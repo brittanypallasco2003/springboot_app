@@ -93,6 +93,7 @@ public class ClienteServiceImpl implements ClienteService {
                 String.format("Datos del cliente: %s actualizados exitosamente", clienteStored.getNombre()));
     }
 
+    @Transactional
     @Override
     public ClienteResponseDTO parcialUpdateCliente(ClienteUpdateDTO dto, Long id) {
         Cliente clienteStored = clienteRepository.findById(id)
@@ -123,6 +124,13 @@ public class ClienteServiceImpl implements ClienteService {
 
         return clienteStored;
 
+    }
+
+    @Transactional
+    @Override
+    public void deleteClient(Long id) {
+        Cliente clienteStored=clienteRepository.findById(id).orElseThrow(()-> new ResourceNotFound("Cliente no encontrado"));
+        clienteRepository.delete(clienteStored);
     }
 
     private ClienteResponseDTO mapClienteResposeDTO(Cliente cliente, String message) {
