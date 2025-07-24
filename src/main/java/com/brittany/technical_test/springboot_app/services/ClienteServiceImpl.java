@@ -93,20 +93,33 @@ public class ClienteServiceImpl implements ClienteService {
                 String.format("Datos del cliente: %s actualizados exitosamente", clienteStored.getNombre()));
     }
 
+    @Override
+    public ClienteResponseDTO parcialUpdateCliente(ClienteUpdateDTO dto, Long id) {
+        Cliente clienteStored = clienteRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFound("Cliente no encontrado"));
 
-    
-    private Cliente validateClientData(ClienteUpdateDTO dto, Cliente clienteStored){
-         if (dto.nombres() != null) clienteStored.setNombre(dto.nombres());
+        Cliente clientUpdated = clienteRepository.save(validateClientData(dto, clienteStored));
 
-        if (dto.password() != null) clienteStored.setPassword(BCrypt.hashpw(dto.password(), BCrypt.gensalt()));
+        return mapClienteResposeDTO(clientUpdated,
+                String.format("Datos del cliente: %s actualizados exitosamente", clienteStored.getNombre()));
 
-        if (dto.direccion() != null) clienteStored.setDireccion(dto.direccion());
-        
+    }
 
-        if (dto.telefono() != null) clienteStored.setTelefono(dto.telefono());
-        
+    private Cliente validateClientData(ClienteUpdateDTO dto, Cliente clienteStored) {
+        if (dto.nombres() != null)
+            clienteStored.setNombre(dto.nombres());
 
-        if (dto.genero() != null) clienteStored.setGenero(dto.genero());
+        if (dto.password() != null)
+            clienteStored.setPassword(BCrypt.hashpw(dto.password(), BCrypt.gensalt()));
+
+        if (dto.direccion() != null)
+            clienteStored.setDireccion(dto.direccion());
+
+        if (dto.telefono() != null)
+            clienteStored.setTelefono(dto.telefono());
+
+        if (dto.genero() != null)
+            clienteStored.setGenero(dto.genero());
 
         return clienteStored;
 

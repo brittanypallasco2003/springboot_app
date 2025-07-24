@@ -12,6 +12,7 @@ public interface ClienteService {
     ClienteResponseDTO getSpecificClient(Long id);
     ClienteResponseDTO createCliente(ClienteCreateDTO dto);
     ClienteResponseDTO updateClient(ClienteUpdateDTO dto,Long id);
+    ClienteResponseDTO parcialUpdateCliente(ClienteUpdateDTO dto, Long id);
     boolean existsByPhoneNumber(String phoneNumber);
     boolean existsByDni(String dni);
 }
