@@ -1,16 +1,19 @@
 package com.brittany.technical_test.springboot_app.DTOs.Request;
 
 import com.brittany.technical_test.springboot_app.validators.annotations.IsCedulaEcuatoriana;
+import com.brittany.technical_test.springboot_app.validators.annotations.IsExistDni;
 import com.brittany.technical_test.springboot_app.validators.annotations.IsExistPhoneNumber;
 
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
 public record ClienteCreateDTO(
         @NotBlank @Size(max = 10, message = "Número de cédula debe tener solamente 10 dígitos")
+        @IsExistDni
         @IsCedulaEcuatoriana
         String numCedula,
 
@@ -23,6 +26,7 @@ public record ClienteCreateDTO(
 
         @NotBlank @Pattern(regexp = "^(M|F|Otro|No especificado)$", message = "Género inválido") String genero,
 
-        @NotBlank @Min(value = 18, message = "Debe ser mayor de edad para abrir una cuenta") @Max(value = 100, message = "Edad máxima permitida es 100 años") Integer edad) {
+        @NotNull
+        @Min(value = 18, message = "Debe ser mayor de edad para abrir una cuenta") @Max(value = 100, message = "Edad máxima permitida es 100 años") Integer edad) {
 
 }
