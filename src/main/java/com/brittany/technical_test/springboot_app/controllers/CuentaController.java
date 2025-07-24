@@ -44,6 +44,12 @@ public class CuentaController {
         return ResponseEntity.created(location).body(response);
     }
 
+    @GetMapping("/all")
+    public ResponseEntity<?> getAllCuentas() {
+        return ResponseEntity.ok().body(cuentaService.listAllCuentas());
+    }
+    
+
     @GetMapping("/{id}")
     public ResponseEntity<?> getAllCuentas(@PathVariable UUID id) {
         return ResponseEntity.ok().body(cuentaService.getSpecificCuenta(id));
