@@ -41,6 +41,7 @@ public class CuentaServiceImpl implements CuentaService {
                 Cuenta cuenta = Cuenta.builder()
                                 .tipoCuenta(dto.tipoCuenta())
                                 .saldoInicial(dto.saldoInicial())
+                                .saldoDisponible(dto.saldoInicial())
                                 .estado(true)
                                 .build();
 
@@ -59,7 +60,7 @@ public class CuentaServiceImpl implements CuentaService {
                 return cuentas.stream()
                                 .map(cta -> new CuentaResponseDTO(
                                                 cta.getId(), cta.getNumCuenta(), cta.getTipoCuenta(),
-                                                cta.getSaldoInicial(), cta.getEstado(),
+                                                cta.getSaldoInicial(), cta.getSaldoDisponible(),cta.getEstado(),
                                                 mapParcialClienteResponseDTO(cta.getCliente())))
                                 .collect(Collectors.toList());
 
@@ -107,6 +108,7 @@ public class CuentaServiceImpl implements CuentaService {
                                 cuenta.getNumCuenta(),
                                 cuenta.getTipoCuenta(),
                                 cuenta.getSaldoInicial(),
+                                cuenta.getSaldoDisponible(),
                                 cuenta.getEstado(), clienteResponseDTO);
 
         }
