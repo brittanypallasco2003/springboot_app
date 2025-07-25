@@ -1,7 +1,6 @@
 package com.brittany.technical_test.springboot_app.services;
 
 import java.util.List;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
@@ -68,7 +67,7 @@ public class CuentaServiceImpl implements CuentaService {
 
         @Transactional(readOnly = true)
         @Override
-        public CuentaResponseDTO getSpecificCuenta(UUID id) {
+        public CuentaResponseDTO getSpecificCuenta(String id) {
                 Cuenta cuentaStored = cuentaRepository.findById(id)
                                 .orElseThrow(() -> new ResourceNotFound("Cuenta no encontrada"));
 
@@ -79,7 +78,7 @@ public class CuentaServiceImpl implements CuentaService {
 
         @Transactional
         @Override
-        public CuentaResponseDTO updateCuentaState(UUID id) {
+        public CuentaResponseDTO updateCuentaState(String id) {
                 Cuenta cuentaStored = cuentaRepository.findById(id)
                                 .orElseThrow(() -> new ResourceNotFound("Cuenta no encontrada"));
 
@@ -98,7 +97,7 @@ public class CuentaServiceImpl implements CuentaService {
 
         @Transactional
         @Override
-        public void deleteCuenta(UUID id) {
+        public void deleteCuenta(String id) {
                 Cuenta cuentaDb=cuentaRepository.findById(id).orElseThrow(()->new ResourceNotFound("Cuenta no encontrada"));
                 cuentaRepository.delete(cuentaDb);
         }
