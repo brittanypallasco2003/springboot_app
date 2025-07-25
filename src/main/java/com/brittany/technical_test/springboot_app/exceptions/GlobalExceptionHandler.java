@@ -77,6 +77,15 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
     }
 
+    @ExceptionHandler(SaldoInsuficienteException.class)
+    public ResponseEntity<?> handleSaldoInsuficiente(SaldoInsuficienteException exception){
+        ErrorResponseDTO response=mapErrorResponseDTO(HttpStatus.UNPROCESSABLE_ENTITY.value(), HttpStatus.UNPROCESSABLE_ENTITY.name(), exception.getMessage(), null);
+
+        return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(response);
+    }
+
+
+
     private ErrorResponseDTO mapErrorResponseDTO(int status, String error, String message, Map<String, String> errors) {
         ErrorResponseDTO.ErrorResponseDTOBuilder builder = ErrorResponseDTO.builder()
                 .timestamp(LocalDateTime.now())
