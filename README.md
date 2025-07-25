@@ -61,7 +61,7 @@ src/
 Incluye una colección Postman ["Technical_Test.postman_collection"](Technical_Test.postman_collection.json) para probar todos los endpoints con ejemplos de request y response.
 
 ## 📄 Script de la Base de datos
-Incluye scrip de la base de datos, entidades y esquema datos, con el nombre ["BaseDatos.sql"](./src/main/resources/BaseDatos.sql)
+Incluye script de la base de datos, entidades y esquema datos, con el nombre ["BaseDatos.sql"](./src/main/resources/BaseDatos.sql)
 
 ## 🔧 Instalación local con Docker Compose
 
