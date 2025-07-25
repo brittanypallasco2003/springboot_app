@@ -12,7 +12,6 @@ import com.brittany.technical_test.springboot_app.services.CuentaService;
 import jakarta.validation.Valid;
 
 import java.net.URI;
-import java.util.UUID;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -52,17 +51,17 @@ public class CuentaController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getAllCuentas(@PathVariable UUID id) {
+    public ResponseEntity<?> getAllCuentas(@PathVariable String id) {
         return ResponseEntity.ok().body(cuentaService.getSpecificCuenta(id));
     }
 
     @PatchMapping("/update-state/{id}")
-    public ResponseEntity<?> updateCuentaState(@PathVariable UUID id) {
+    public ResponseEntity<?> updateCuentaState(@PathVariable String id) {
         return ResponseEntity.ok().body(cuentaService.updateCuentaState(id));
     }
 
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<?> deleteCuenta(@PathVariable UUID id) {
+    public ResponseEntity<?> deleteCuenta(@PathVariable String id) {
         cuentaService.deleteCuenta(id);
         return ResponseEntity.noContent().build();
     }
