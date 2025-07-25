@@ -10,6 +10,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 import lombok.Builder;
 import lombok.Getter;
@@ -42,12 +43,16 @@ public class Movimiento {
     private Cuenta cuenta;
 
     @Builder
-    public Movimiento(LocalDateTime fecha, String tipoMovimiento, BigDecimal valor, BigDecimal saldo, Cuenta cuenta) {
-        this.fecha = fecha;
+    public Movimiento(String tipoMovimiento, BigDecimal valor, BigDecimal saldo, Cuenta cuenta) {
         this.tipoMovimiento = tipoMovimiento;
         this.valor = valor;
         this.saldo = saldo;
         this.cuenta = cuenta;
+    }
+
+    @PrePersist
+    public void prePersist() {
+        this.fecha = LocalDateTime.now();
     }
 
     @Override
