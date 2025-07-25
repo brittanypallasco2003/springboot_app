@@ -31,6 +31,9 @@ public class Cuenta {
 
     @Column(name = "saldo_inicial", nullable = false, precision = 10, scale = 2)
     private BigDecimal saldoInicial;
+    
+    @Column(name = "saldo_disponible", nullable = false, precision = 10, scale = 2)
+    private BigDecimal saldoDisponible;
 
     private Boolean estado;
 
@@ -42,10 +45,11 @@ public class Cuenta {
     private Set<Movimiento> movimientos = new HashSet<>();
 
     @Builder
-    public Cuenta(TipoCuentaEnum tipoCuenta, BigDecimal saldoInicial, Boolean estado, Cliente cliente,
+    public Cuenta(TipoCuentaEnum tipoCuenta, BigDecimal saldoInicial, BigDecimal saldoDisponible, Boolean estado, Cliente cliente,
                   Set<Movimiento> movimientos) {
         this.tipoCuenta = tipoCuenta;
         this.saldoInicial = saldoInicial;
+        this.saldoDisponible=saldoDisponible;
         this.estado = estado;
         this.cliente = cliente;
         this.movimientos = movimientos;
