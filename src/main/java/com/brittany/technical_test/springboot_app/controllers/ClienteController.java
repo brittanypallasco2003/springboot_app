@@ -33,7 +33,7 @@ public class ClienteController {
         this.clienteService = clienteService;
     }
 
-    @PostMapping("/create")
+    @PostMapping
     public ResponseEntity<?> postCliente(@RequestBody @Valid ClienteCreateDTO dto) {
         ClienteResponseDTO response = clienteService.createCliente(dto);
 
@@ -46,7 +46,7 @@ public class ClienteController {
         return ResponseEntity.created(location).body(response);
     }
 
-    @GetMapping("/all")
+    @GetMapping
     public ResponseEntity<?> getAllClients() {
         return ResponseEntity.ok().body(clienteService.listAllClients());
     }
@@ -56,20 +56,20 @@ public class ClienteController {
         return ResponseEntity.ok().body(clienteService.getSpecificClient(id));
     }
 
-    @PutMapping("/update/{id}")
+    @PutMapping("/{id}")
     public ResponseEntity<?> replaceClient(@PathVariable Long id, @Valid @RequestBody ClienteUpdateDTO dto) {
 
         return ResponseEntity.ok().body(clienteService.updateClient(dto, id));
     }
 
-    @PatchMapping("/update/{id}")
+    @PatchMapping("/{id}")
     public ResponseEntity<?> patchCLient(@PathVariable Long id,
             @Valid @RequestBody ClienteUpdateDTO dto) {
         return ResponseEntity.ok().body(clienteService.parcialUpdateCliente(dto, id));
 
     }
 
-    @DeleteMapping("/delete/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteClient(@PathVariable Long id) {
         clienteService.deleteClient(id);
         return ResponseEntity.noContent().build();
