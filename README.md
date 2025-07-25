@@ -65,16 +65,16 @@ Incluye script de la base de datos, entidades y esquema datos, con el nombre ["B
 
 ## 🔧 Instalación local con Docker Compose
 
-Clona este repositorio:
+1. Clona este repositorio:
 
 ```bash
 git clone https://github.com/brittanypallasco2003/springboot_app.git
 ```
 
-Ve al directorio del proyecto
+2. Ve al directorio del proyecto
 
 ```bash
-cd technical-test-backend
+cd springboot_app
 ```
 
 3. Copia el archivo .env.example a .env:
