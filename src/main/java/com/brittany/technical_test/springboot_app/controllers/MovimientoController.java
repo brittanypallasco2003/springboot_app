@@ -29,7 +29,7 @@ public class MovimientoController {
         this.movimientoService = movimientoService;
     }
 
-    @PostMapping("/post")
+    @PostMapping
     public ResponseEntity<?> postMovimiento(@Valid @RequestBody RegistroMovimientoDTO dto) {
         RegistroMovimientoResponseDTO response=movimientoService.registrarMovimiento(dto);
          URI location = ServletUriComponentsBuilder
@@ -41,7 +41,7 @@ public class MovimientoController {
         return ResponseEntity.created(location).body(response);
     }
 
-    @GetMapping("/get-all")
+    @GetMapping
     public ResponseEntity<?> getAllMovimientos() {
         return ResponseEntity.ok().body(movimientoService.listAllMovimientos());
     }
