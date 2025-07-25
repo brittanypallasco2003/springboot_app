@@ -15,20 +15,17 @@ import com.brittany.technical_test.springboot_app.exceptions.SaldoInsuficienteEx
 import com.brittany.technical_test.springboot_app.models.Cliente;
 import com.brittany.technical_test.springboot_app.models.Cuenta;
 import com.brittany.technical_test.springboot_app.models.Movimiento;
-import com.brittany.technical_test.springboot_app.repositories.ClienteRepository;
 import com.brittany.technical_test.springboot_app.repositories.CuentaRepository;
 import com.brittany.technical_test.springboot_app.repositories.MovimientoRepository;
 
 @Service
 public class MovimientoServiceImpl implements MovimientoService {
 
-    private final ClienteRepository clienteRepository;
     private final CuentaRepository cuentaRepository;
     private final MovimientoRepository movimientoRepository;
 
-    public MovimientoServiceImpl(ClienteRepository clienteRepository, CuentaRepository cuentaRepository,
+    public MovimientoServiceImpl(CuentaRepository cuentaRepository,
             MovimientoRepository movimientoRepository) {
-        this.clienteRepository = clienteRepository;
         this.cuentaRepository = cuentaRepository;
         this.movimientoRepository = movimientoRepository;
     }
@@ -70,7 +67,8 @@ public class MovimientoServiceImpl implements MovimientoService {
 
         return movimientoRepository.findAllMovimientosProyeccion()
                 .stream()
-                .map(p -> new RegistroMovimientoResponseDTO(p.getFecha(),
+                .map(p -> new RegistroMovimientoResponseDTO(p.getId(),
+                        p.getFecha(),
                         p.getNombreCliente(),
                         p.getNumCuenta(),
                         p.getTipoCuenta(),
@@ -87,6 +85,7 @@ public class MovimientoServiceImpl implements MovimientoService {
         RegistroMovimientoProjection mProjection = movimientoRepository.findProyeccionById(id).orElseThrow(() -> new ResourceNotFound("Movimiento no encontrado"));
 
         return new RegistroMovimientoResponseDTO(
+                mProjection.getId(),
                 mProjection.getFecha(),
                 mProjection.getNombreCliente(),
                 mProjection.getNumCuenta(),
@@ -100,7 +99,8 @@ public class MovimientoServiceImpl implements MovimientoService {
 
     private RegistroMovimientoResponseDTO mapRegistroMovimientoResponse(Movimiento movimiento, Cuenta cuenta,
             Cliente cliente) {
-        return new RegistroMovimientoResponseDTO(movimiento.getFecha(),
+        return new RegistroMovimientoResponseDTO(movimiento.getId(),
+            movimiento.getFecha(),
                 cliente.getNombre(),
                 cuenta.getNumCuenta(),
                 cuenta.getTipoCuenta(),
