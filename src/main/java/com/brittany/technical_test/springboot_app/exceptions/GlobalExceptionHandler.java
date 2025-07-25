@@ -31,6 +31,8 @@ public class GlobalExceptionHandler {
 
         fieldErrors.forEach(error -> mapErrors.put(error.getField(), error.getDefaultMessage()));
 
+        result.getGlobalErrors().forEach(error -> mapErrors.put(error.getObjectName(), error.getDefaultMessage()));
+
         ErrorResponseDTO response = mapErrorResponseDTO(HttpStatus.BAD_REQUEST.value(), HttpStatus.BAD_REQUEST.name(),
                 "Error de validación", mapErrors);
 
@@ -71,20 +73,20 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(IllegalStateException.class)
-    public ResponseEntity<?> handleIllegalState(IllegalStateException exception){
-        ErrorResponseDTO response=mapErrorResponseDTO(HttpStatus.CONFLICT.value(), HttpStatus.CONFLICT.name(), exception.getMessage(), null);
+    public ResponseEntity<?> handleIllegalState(IllegalStateException exception) {
+        ErrorResponseDTO response = mapErrorResponseDTO(HttpStatus.CONFLICT.value(), HttpStatus.CONFLICT.name(),
+                exception.getMessage(), null);
 
         return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
     }
 
     @ExceptionHandler(SaldoInsuficienteException.class)
-    public ResponseEntity<?> handleSaldoInsuficiente(SaldoInsuficienteException exception){
-        ErrorResponseDTO response=mapErrorResponseDTO(HttpStatus.UNPROCESSABLE_ENTITY.value(), HttpStatus.UNPROCESSABLE_ENTITY.name(), exception.getMessage(), null);
+    public ResponseEntity<?> handleSaldoInsuficiente(SaldoInsuficienteException exception) {
+        ErrorResponseDTO response = mapErrorResponseDTO(HttpStatus.UNPROCESSABLE_ENTITY.value(),
+                HttpStatus.UNPROCESSABLE_ENTITY.name(), exception.getMessage(), null);
 
         return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(response);
     }
-
-
 
     private ErrorResponseDTO mapErrorResponseDTO(int status, String error, String message, Map<String, String> errors) {
         ErrorResponseDTO.ErrorResponseDTOBuilder builder = ErrorResponseDTO.builder()
