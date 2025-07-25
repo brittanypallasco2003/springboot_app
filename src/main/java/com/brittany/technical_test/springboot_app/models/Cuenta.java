@@ -40,7 +40,7 @@ public class Cuenta {
     @JoinColumn(name = "cliente_id")
     private Cliente cliente;
 
-    @OneToMany(mappedBy = "cuenta", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "cuenta", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private Set<Movimiento> movimientos = new HashSet<>();
 
     @Builder
@@ -59,6 +59,12 @@ public class Cuenta {
         if (this.numCuenta == null) {
             this.numCuenta = String.format("%010d", (int) (Math.random() * 1_000_000_000));
         }
+    }
+
+    public Cuenta addMovimiento(Movimiento newMovimiento){
+        movimientos.add(newMovimiento);
+        newMovimiento.setCuenta(this);
+        return this;
     }
 
     @Override
