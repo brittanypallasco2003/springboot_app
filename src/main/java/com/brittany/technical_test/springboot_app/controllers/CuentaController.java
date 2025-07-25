@@ -31,7 +31,7 @@ public class CuentaController {
         this.cuentaService = cuentaService;
     }
 
-    @PostMapping("/create")
+    @PostMapping
     public ResponseEntity<?> postCuenta(@RequestParam Long clientId, @Valid @RequestBody CuentaCreateDTO dto) {
 
         CuentaResponseDTO response = cuentaService.crearCuenta(clientId, dto);
@@ -45,22 +45,22 @@ public class CuentaController {
         return ResponseEntity.created(location).body(response);
     }
 
-    @GetMapping("/all")
+    @GetMapping
     public ResponseEntity<?> getAllCuentas() {
         return ResponseEntity.ok().body(cuentaService.listAllCuentas());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getAllCuentas(@PathVariable String id) {
+    public ResponseEntity<?> getSpecificCuenta(@PathVariable String id) {
         return ResponseEntity.ok().body(cuentaService.getSpecificCuenta(id));
     }
 
-    @PatchMapping("/update-state/{id}")
+    @PatchMapping("/{id}")
     public ResponseEntity<?> updateCuentaState(@PathVariable String id) {
         return ResponseEntity.ok().body(cuentaService.updateCuentaState(id));
     }
 
-    @DeleteMapping("/delete/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteCuenta(@PathVariable String id) {
         cuentaService.deleteCuenta(id);
         return ResponseEntity.noContent().build();
