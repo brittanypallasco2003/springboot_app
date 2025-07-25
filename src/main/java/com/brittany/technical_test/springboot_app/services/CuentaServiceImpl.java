@@ -59,7 +59,7 @@ public class CuentaServiceImpl implements CuentaService {
                 return cuentas.stream()
                                 .map(cta -> new CuentaResponseDTO(
                                                 cta.getId(), cta.getNumCuenta(), cta.getTipoCuenta(),
-                                                cta.getSaldoInicial(), cta.getSaldoDisponible(),cta.getEstado(),
+                                                cta.getSaldoInicial(), cta.getSaldoDisponible(), cta.getEstado(),
                                                 mapParcialClienteResponseDTO(cta.getCliente())))
                                 .collect(Collectors.toList());
 
@@ -98,7 +98,13 @@ public class CuentaServiceImpl implements CuentaService {
         @Transactional
         @Override
         public void deleteCuenta(String id) {
-                Cuenta cuentaDb=cuentaRepository.findById(id).orElseThrow(()->new ResourceNotFound("Cuenta no encontrada"));
+                Cuenta cuentaDb = cuentaRepository
+                                .findById(id)
+                                .orElseThrow(() -> new ResourceNotFound("Cuenta no encontrada"));
+                Cliente cliente = cuentaDb.getCliente();
+                if (cliente != null) {
+                        cliente.removeCuenta(cuentaDb);
+                }
                 cuentaRepository.delete(cuentaDb);
         }
 
