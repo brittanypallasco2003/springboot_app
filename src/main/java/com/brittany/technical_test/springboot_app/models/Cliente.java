@@ -49,6 +49,10 @@ public class Cliente extends Persona {
         return this;
     }
 
+    public void removeCuenta(Cuenta cuenta){
+        this.getCuentas().remove(cuenta);
+        cuenta.setCliente(null);
+    }
      @Override
     public boolean equals(Object o) {
         if (this == o) return true;
