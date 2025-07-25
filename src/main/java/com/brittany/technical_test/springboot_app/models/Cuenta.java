@@ -3,7 +3,6 @@ package com.brittany.technical_test.springboot_app.models;
 import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.UUID;
 
 import jakarta.persistence.*;
 import lombok.Builder;
@@ -20,7 +19,7 @@ public class Cuenta {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID id;
+    private String id;
 
     @Column(name = "num_cuenta", length = 10, unique = true, nullable = false)
     private String numCuenta;
